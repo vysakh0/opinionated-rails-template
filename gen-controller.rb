@@ -3,8 +3,6 @@ class Api::V1::UsersController < ApplicationController
 
   def create
     user = User.new(user_params)
-    user.password = "1234~abcd"
-    user.password_confirmation = "1234~abcd"
 
     if user.save
       user.confirm!
