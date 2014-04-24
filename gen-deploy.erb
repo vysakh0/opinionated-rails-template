@@ -1,0 +1,46 @@
+lock '3.1.0'
+
+set :application, "<%= config[:app_name] %>"
+set :repo_url, 'git@github.com:<%= config[:repo_user_name] %>/<%= config[:repo_name] %>.git'
+
+ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
+
+set :deploy_to, '/home/ubuntu/apps/<%= config[:app_name] %>'
+set :scm, :git
+
+set :pty, true
+set :deploy_via, :remote_cache
+set :sudo_user, "ubuntu"
+set :use_sudo, false
+
+set :linked_files, %w{config/database.yml}
+set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+set :ssh_options, { :forward_agent => true }
+
+set :default_env, { path: "$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH" }
+set :keep_releases, 5
+after 'deploy:publishing', 'deploy:restart'
+before :deploy,'deploy:install_node_modules'
+before :deploy,'deploy:stop_node'
+before :deploy,'deploy:start_node'
+
+namespace :deploy do
+
+  namespace :check do
+    task :linked_files => 'config/database.yml'
+  end
+  desc 'Setup nginx related stuffs'
+  task :setup_config do
+    on roles(:app), in: :sequence, wait: 5 do
+    execute :sudo, "ln -nfs #{current_path}/config/nginx.conf /etc/nginx/sites-enabled/<%= config[:app_name] %>"
+    end
+  end
+  task :restart do
+    invoke 'unicorn:reload'
+  end
+end
+remote_file 'config/database.yml' => 'config/database.example.yml', roles: :app
+
+file 'config/database.example.yml' do |t|
+  File.read release_path.join(t.name)
+end

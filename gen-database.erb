@@ -1,0 +1,19 @@
+production:
+  adapter: postgresql
+  encoding: unicode
+  database: production
+  username: random
+  password: yo
+  host: localhost
+  pool: 50
+  timeout: 100000
+
+staging:
+  adapter: postgresql
+  encoding: unicode
+  database: <%= config[:db_name] %>
+  username: <%= config[:user_name] %>
+  password: <%= config[:passowrd] %>
+  host: localhost
+  pool: 50
+  timeout: 100000

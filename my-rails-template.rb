@@ -10,6 +10,7 @@ gem_group :development, :test do
     gem 'rspec', '~> 3.0.0.beta2'
     gem 'sqlite3'
     gem 'faker'
+    gem 'letter_opener'
     gem 'capistrano', '3.1'
     gem 'capistrano-bundler'
     gem 'capistrano-rails'
@@ -38,7 +39,15 @@ run "rm README.rdoc"
 copy_file "gen-README.md",  "README.md"
 
 run "rm -rf test"
-#generate 'rspec:install'
+generate 'rspec:install'
+
+environment <<-FILE
+  config.generators do |g|
+    g.helpers false
+    g.javascripts false
+    g.stylesheets false
+  end
+FILE
 
 git :init
 git add: "."
@@ -91,7 +100,8 @@ end
 
 gsub_file "app/models/user.rb", /.*devise.*/, ""
 gsub_file "app/models/user.rb", /.*:recoverable.*/, ""
-inject_into_file 'app/models/user.rb', after: "class User < ActiveRecord::Base\n" do <<-'RUBY'
+
+inject_into_class 'app/models/user.rb', 'User' do <<-'RUBY'
   devise :database_authenticatable, :registerable, :confirmable,
   :recoverable, :rememberable, :trackable, :validatable
 
@@ -123,3 +133,41 @@ end
 
 git add: "."
 git commit: %Q{ -m 'Create sessions controller, password related logics' }
+
+
+run 'bundle exec cap install'
+
+copy_file "production.rb",  "config/environments/staging.rb"
+
+staging_site = ask("What is your staging site url?")
+app_name     = ask("What is your app name?")
+environment "config.action_mailer.default_url_options = {host: '#{staging_site}'}", env: 'staging'
+environment "config.action_mailer.delivery_method = :smtp", env: 'staging'
+
+environment "config.action_mailer.default_url_options = {host: '#{staging_site}'}", env: 'production'
+environment "config.action_mailer.delivery_method = :smtp", env: 'production'
+environment "config.action_mailer.default_url_options = {host: 'http://localhost:3000'}", env: 'development'
+environment "config.action_mailer.delivery_method = :letter_opener", env: 'development'
+
+template "gen-nginx.erb", "config/nginx.conf" , { app_name: app_name, staging_site: staging_site}
+template "gen-unicorn.erb", "config/unicorn/staging.rb" , { app_name: app_name, staging_site: staging_site}
+
+run "rm config/deploy/staging.rb"
+template "gen-staging.erb", "config/deploy/staging.rb" , { app_name: app_name, staging_site: staging_site}
+
+repo_user_name = ask("What is your repo user name?")
+repo_name = ask("What is your repo name?")
+run "rm config/deploy.rb"
+template "gen-deploy.erb", "config/deploy.rb" , { app_name:       app_name,
+                                                      staging_site:   staging_site,
+                                                      repo_name:      repo_name,
+                                                      repo_user_name: repo_user_name
+                                                    }
+
+db_name = ask("What is your db name?")
+user_name = ask("What is your db user name?")
+password = ask("What is your db password?")
+template "gen-database.erb", "config/database.example.yml" , {db_name: db_name, user_name: user_name, password: password}
+
+git add: "."
+git commit: %Q{ -m 'Set capistrano, unicorn, nginx configs' }
