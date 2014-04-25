@@ -200,7 +200,6 @@ App.ApplicationAdapter = DS.ActiveModelAdapter.extend({
 FILE
 end
 
-directory "images", "app/assets/images"
 directory "ember", "vendor/assets/ember"
 
 git add: "."
