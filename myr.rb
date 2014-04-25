@@ -33,7 +33,7 @@ gsub_file "Gemfile", /.*turbolinks.*/, ""
 
 gsub_file "app/assets/javascripts/application.js", /.*turbolinks.*/, ""
 
-run "bundle install"
+run "bundle install --local"
 
 run "rm README.rdoc"
 copy_file "gen-README.md",  "README.md"
@@ -175,22 +175,35 @@ git commit: %Q{ -m 'Set capistrano, unicorn, nginx configs' }
 
 
 gem 'ember-rails'
-gem 'ember-source', '1.5.1'
+gem 'ember-source', '1.5.0'
 
 run 'bundle install --local'
-generate "ember:install"
+#generate "ember:install"
 generate "ember:bootstrap -n App"
 
-gsub_file "app/views/layout/application.html.erb", /.*yield.*/, ""
+gsub_file "app/views/layouts/application.html.erb", /.*yield.*/, ""
 
 copy_file "application.hbs",  "app/assets/javascripts/templates/application.hbs"
-copy_file "_navbar.hbs",  "app/assets/javascripts/templates/_navbar.hbs"
-copy_file "_footer.hbs",  "app/assets/javascripts/templates/_footer.hbs"
+copy_file "navbar.hbs",  "app/assets/javascripts/templates/_navbar.hbs"
+copy_file "footer.hbs",  "app/assets/javascripts/templates/_footer.hbs"
 copy_file "application_ctrl.js",  "app/assets/javascripts/controllers/application.js"
 copy_file "application_route.js",  "app/assets/javascripts/routes/application.js"
+copy_file "user.js",  "app/assets/javascripts/models/user.js"
+copy_file "session.js",  "app/assets/javascripts/models/session.js"
 copy_file "custom.scss",  "app/assets/stylesheets/custom.scss"
 
+run "rm app/assets/javascripts/store.js"
+create_file 'app/assets/javascripts/store.js' do <<-FILE
+App.ApplicationAdapter = DS.ActiveModelAdapter.extend({
+  namespace: 'api/v1'
+});
+FILE
+end
+
 directory "images", "app/assets/images"
+directory "ember", "vendor/assets/ember"
 
 git add: "."
 git commit: %Q{ -m 'Configure ember and have default stuffs' }
+
+rake 'db:migrate'

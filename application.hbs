@@ -1,0 +1,22 @@
+{{#if notification}}
+<div class="row">
+    <div class="large-3 large-centered columns">
+
+        <div {{bind-attr class=":alert-box :round notification.type"}} >
+            <a class="close" href="#" {{action "closeNotification" }}>&times;</a>
+            {{notification.message}}
+        </div>
+    </div>
+</div>
+{{/if}}
+
+<div style='min-height:600px;'>{{outlet}}</div>
+{{outlet modal}}
+
+{{#if isSignedIn}}
+{{partial 'slidePanel/master'}}
+{{/if}}
+
+<div {{bind-attr class=" isPanel:overlay"}} {{action 'togglePanel'}}></div>
+
+{{partial 'footer'}}
