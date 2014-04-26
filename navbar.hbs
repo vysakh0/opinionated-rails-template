@@ -1,10 +1,25 @@
 <div class="row navbar-bg">
-	<div class="large-7 small-12 medium-4 small-centered large-uncentered medium-uncentered columns">
-	</div>
-	<div class="large-4 medium-6 small-10  small-centered large-uncentered medium-uncentered columns">
-		<ul class="nav-block">
-			<li><i class="works-icon inline-block" ></i><div class='login-button inline'>How it works</div></li>
-			<li><i class="user-icon inline-block" ></i><div class='login-button inline' {{action 'toggleLoginPopup'}}>Login</div></li>
-		</ul>
-	</div>
+  <div class="large-7 small-12 medium-4 small-centered large-uncentered medium-uncentered columns">
+  </div>
+  <div class="large-4 medium-6 small-10  small-centered large-uncentered medium-uncentered columns">
+    <ul class="nav-block">
+      <li><i class="works-icon inline-block" ></i><div class='login-button inline'>How it works</div></li>
+      <li><i class="user-icon inline-block" ></i><div class='login-button inline' {{action 'toggleLoginPopup'}}>Login</div></li>
+    </ul>
+  </div>
+</div>
+<div class="login-container ">
+
+  <div class='post-title center login-title' >
+    Login
+  </div>
+  <div class="center" style='margin-top:15px;'>
+
+    <a href="/users/auth/google_oauth2">
+      <button class="button-social google " data-ember-action="81"><span class="icon-google"></span>with Google</button>
+    </a>
+    <a href="/users/auth/facebook">
+      <button class="button-social facebook " data-ember-action="81"><span class="icon-facebook"></span>with Facebook</button>
+    </a>
+  </div>
 </div>

@@ -206,3 +206,25 @@ git add: "."
 git commit: %Q{ -m 'Configure ember and have default stuffs' }
 
 rake 'db:migrate'
+
+gem 'omniauth-facebook'
+gem 'omniauth-google-oauth2'
+run "rm config/initializers/devise.rb"
+copy_file "devise.rb", "config/initializers/devise.rb"
+copy_file "secrets.yml", "config/secrets.yml"
+
+generate 'model omniauth user:belongs_to  provider:string uid:string'
+inject_into_class 'app/models/omniauth.rb', 'Omniauth' do <<-'RUBY'
+belongs_to :user
+
+def self.sign_in(auth)
+  OmniauthProcess::CommonOmniauth.new(auth).omniauth_user
+end
+RUBY
+end
+copy_file 'omniauth_process.rb', 'app/models/concerns/omniauth_process.rb'
+route "devise_for :users, controllers:  {registrations: 'users', omniauth_callbacks: 'omniauth_callbacks'}"
+copy_file 'omniauth_controller.rb', 'app/controllers/omniauth_callbacks_controller.rb'
+
+git add: "."
+git commit: %Q{ -m 'Add facebook, google omniauth logins' }
