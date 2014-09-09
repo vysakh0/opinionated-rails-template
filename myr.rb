@@ -3,6 +3,7 @@ def source_paths
 end
 gsub_file "Gemfile", /.*sqlite3.*/, ""
 gem 'devise'
+gem 'omniauth'
 gem_group :development, :test do
     gem 'factory_girl_rails'
     gem 'rspec-rails', '~> 3.0.0.beta'
@@ -33,7 +34,7 @@ gsub_file "Gemfile", /.*turbolinks.*/, ""
 
 gsub_file "app/assets/javascripts/application.js", /.*turbolinks.*/, ""
 
-run "bundle install --local"
+run "bundle install"
 
 run "rm README.rdoc"
 copy_file "gen-README.md",  "README.md"
@@ -53,7 +54,8 @@ FILE
 git :init
 git add: "."
 git commit: %Q{ -m 'Initial commit' }
-
+git remote: "add origin git@github.com:vysakh0/cg-dev.git"
+git push: "-u origin master"
 # home file
 
 generate :controller, "home"
@@ -104,7 +106,7 @@ gsub_file "app/models/user.rb", /.*:recoverable.*/, ""
 
 inject_into_class 'app/models/user.rb', 'User' do <<-'RUBY'
   devise :database_authenticatable, :registerable, :confirmable,
-  :recoverable, :rememberable, :trackable, :validatable
+  :recoverable, :rememberable, :trackable, :validatable, :omniauthable
 
   def send_on_create_confirmation_instructions
     #send_devise_notification(:confirmation_instructions)
@@ -177,7 +179,7 @@ git commit: %Q{ -m 'Set capistrano, unicorn, nginx configs' }
 gem 'ember-rails'
 gem 'ember-source', '1.5.0'
 
-run 'bundle install --local'
+run 'bundle install'
 #generate "ember:install"
 generate "ember:bootstrap -n App"
 
@@ -228,3 +230,18 @@ copy_file 'omniauth_controller.rb', 'app/controllers/omniauth_callbacks_controll
 
 git add: "."
 git commit: %Q{ -m 'Add facebook, google omniauth logins' }
+
+generate 'migration add_fields_to_users hodor:string '
+rake 'db:migrate'
+git add: "."
+git commit: %Q{ -m 'Add hodor to users table' }
+
+generate 'model post user:belongs_to'
+rake 'db:migrate'
+git add: "."
+git commit: %Q{ -m 'Create post model with custom fields' }
+
+generate 'model hodor user:belongs_to post:belongs_to'
+rake 'db:migrate'
+git add: "."
+git commit: %Q{ -m 'Create hodor with custom fields' }

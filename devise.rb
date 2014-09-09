@@ -233,7 +233,6 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
   config.omniauth :facebook, Rails.application.secrets.facebook_consumer_key , Rails.application.secrets.facebook_consumer_secret, :scope => 'email,user_birthday,read_stream', :display => 'popup'
-  config.omniauth :twitter, Rails.application.secrets.twitter_consumer_key , Rails.application.secrets.twitter_consumer_secret,  :display => 'popup'
   config.omniauth :google_oauth2, Rails.application.secrets.google_consumer_key , Rails.application.secrets.google_consumer_secret,  {
         :name => "google_oauth2",
         :scope => "userinfo.email, userinfo.profile",

@@ -1,5 +1,5 @@
 // Fetched from channel: release, with url http://builds.emberjs.com/release/ember.js
-// Fetched on: 2014-04-18T07:36:36Z
+// Fetched on: 2014-05-20T07:38:49Z
 /*!
  * @overview  Ember - JavaScript Application Framework
  * @copyright Copyright 2011-2014 Tilde Inc. and contributors
@@ -7,7 +7,7 @@
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   1.5.1+pre.5349ffcb
+ * @version   1.5.1
  */
 
 
@@ -229,7 +229,7 @@ if (!Ember.testing) {
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   1.5.1+pre.5349ffcb
+ * @version   1.5.1
  */
 
 
@@ -312,7 +312,7 @@ var define, requireModule, require, requirejs;
 
   @class Ember
   @static
-  @version 1.5.1+pre.5349ffcb
+  @version 1.5.1
 */
 
 if ('undefined' === typeof Ember) {
@@ -339,10 +339,10 @@ Ember.toString = function() { return "Ember"; };
 /**
   @property VERSION
   @type String
-  @default '1.5.1+pre.5349ffcb'
+  @default '1.5.1'
   @static
 */
-Ember.VERSION = '1.5.1+pre.5349ffcb';
+Ember.VERSION = '1.5.1';
 
 /**
   Standard environmental variables. You can define these in a global `EmberENV`
@@ -15874,10 +15874,11 @@ function ReduceComputedProperty(options) {
   this.cacheable();
 
   this.recomputeOnce = function(propertyName) {
-    // TODO: Coalesce recomputation by <this, propertyName, cp>.
-    recompute.call(this, propertyName);
+    // What we really want to do is coalesce by <cp, propertyName>.
+    // We need a form of `scheduleOnce` that accepts an arbitrary token to
+    // coalesce by, in addition to the target and method.
+    Ember.run.once(this, recompute, propertyName);
   };
-
   var recompute = function(propertyName) {
     var dependentKeys = cp._dependentKeys,
         meta = cp._instanceMeta(this, propertyName),

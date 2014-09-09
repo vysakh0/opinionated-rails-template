@@ -1,0 +1,9 @@
+Description:
+    Generates an api controller which only returns json data
+
+Example:
+    rails generate apic users
+
+    This will create:
+        app/controllers/api/v1/users_controller.rb
+

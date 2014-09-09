@@ -231,7 +231,7 @@ copy_file 'omniauth_controller.rb', 'app/controllers/omniauth_callbacks_controll
 git add: "."
 git commit: %Q{ -m 'Add facebook, google omniauth logins' }
 
-generate 'migration add_fields_to_users name:string hodor:string admin:boolean'
+generate 'migration add_fields_to_users name:string admin:boolean'
 rake 'db:migrate'
 git add: "."
 git commit: %Q{ -m 'Add custom fields to users table' }
@@ -243,17 +243,3 @@ git commit: %Q{ -m 'Include api controller generator' }
 
 ## Write project specifc
 #
-# Models
-generate 'model post user:belongs_to'
-generate 'model hodor user:belongs_to post:belongs_to'
-
-git add: "."
-git commit: %Q{ -m 'Add relevant models related to hodor' }
-
-
-# Controllers
-generate  'apic posts'
-generate  'apic hodors'
-
-git add: "."
-git commit: %Q{ -m 'Add relevant api controllers' }

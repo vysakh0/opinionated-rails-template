@@ -329,22 +329,8 @@ $white-color: #fff;
 .login-button:hover{
     color: $green-color;
 }
-@import "foundation/components/block-grid";
-/* Mixin and configurable options */
-
-
-/* This controls how many elements will be on each row of the block grid. */
-/* Set this to whatever number you need, up to the max allowed in the variable */
-$per-row: false;
-
-/* This controls how much space is between each item in the block grid */
-$spacing: 0px;
-
-/* This controls whether or not base styles come through, set to false to leave out */
-/* This is handy for when you create multiple block-grids and want less CSS output repetition */
 $base-style: true;
 .nav-block {
-    @include block-grid(2, $spacing, $base-style);
     position:absolute;
     right: 0;
     margin-right: 10px;
